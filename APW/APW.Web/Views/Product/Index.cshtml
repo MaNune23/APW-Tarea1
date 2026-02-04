@@ -1,0 +1,77 @@
+﻿@model IEnumerable<APW.Web.Models.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Product Page";
+    var productos = Model.ToList();
+    var totalAcumulado = 0m;
+    var limite = 300m;
+    var indice = 0;
+}
+
+<div class="text-center">
+
+    <!-- FOREACH -->
+    @foreach (var product in Model)
+    {
+        <div class="product-item">
+            <h2>@product.Id - @product.Name</h2>
+            <p>Price: @product.Price.ToString("C")</p>
+
+            <!-- IF -->
+            @if (EvaluarPrecio(product.Price) == "Producto caro")
+            {
+                <span style="color:red">@EvaluarPrecio(product.Price)</span>
+            }
+            else
+            {
+                <span style="color:green">@EvaluarPrecio(product.Price)</span>
+            }
+
+            <!-- SWITCH -->
+            @switch (product.Category)
+            {
+                case "A":
+                    <p>Categoría Premium</p>
+                    break;
+                case "B":
+                    <p>Categoría Estándar</p>
+                    break;
+                default:
+                    <p>Otra categoría</p>
+                    break;
+            }
+        </div>
+    }
+
+    <hr />
+
+    <!-- WHILE -->
+    <h3>Productos hasta alcanzar el límite</h3>
+    @while (indice < productos.Count && totalAcumulado <= limite)
+    {
+        var producto = productos[indice];
+        totalAcumulado += producto.Price;
+
+        <p>@producto.Name - @producto.Price.ToString("C")</p>
+
+        indice++;
+    }
+</div>
+
+@functions {
+    public string EvaluarPrecio(decimal price)
+    {
+        if (price > 100)
+        {
+            return "Producto caro";
+        }
+        else if (price > 50)
+        {
+            return "Producto moderado";
+        }
+        else
+        {
+            return "Producto económico";
+        }
+    }
+}
